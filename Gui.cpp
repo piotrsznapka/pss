@@ -34,28 +34,41 @@ void Gui::createConfigButton(QLayout *layout)
 
 void Gui::createPlot(QLayout* layout)
 {
-    customPlot = new QCustomPlot();
-    customPlot->setMinimumHeight(500);
-    customPlot->setMinimumWidth(500);
+    wykresWejscie = new QCustomPlot();
+    wykresWejscie->setMinimumHeight(320);
+    wykresWejscie->setMinimumWidth(480);
     
-    customPlot->addGraph();
-    //customPlot->graph(0)->setData(x, y);
+    wykresWejscie->addGraph();
     
-    customPlot->xAxis->setLabel("x");
-    customPlot->yAxis->setLabel("y");
-    customPlot->xAxis->setRange(0, 5);
-    customPlot->yAxis->setRange(-5, -5);
-    customPlot->replot();
+    wykresWejscie->xAxis->setLabel("x");
+    wykresWejscie->yAxis->setLabel("y");
+    wykresWejscie->replot();
 
-    layout->addWidget(customPlot);
+    layout->addWidget(wykresWejscie);
+    
+    wykresWyjscie = new QCustomPlot();
+    wykresWyjscie->setMinimumHeight(320);
+    wykresWyjscie->setMinimumWidth(480);
+    
+    wykresWyjscie->addGraph();
+    
+    wykresWyjscie->xAxis->setLabel("x");
+    wykresWyjscie->yAxis->setLabel("y");
+    wykresWyjscie->replot();
+
+    layout->addWidget(wykresWyjscie);
 }
 
-void Gui::redrawPlot(QVector<double> x, QVector<double> y)
+void Gui::redrawPlot(QVector<double> x, QVector<double> wejscie, QVector<double> wyjscie)
 {
-    customPlot->graph(0)->setData(x, y);
-    customPlot->xAxis->setRange(*min_element(x.begin(), x.end()), *max_element(x.begin(), x.end()));
-    customPlot->yAxis->setRange(*min_element(y.begin(), y.end()), *max_element(y.begin(), y.end()));
-    customPlot->replot();
+    wykresWejscie->graph(0)->setData(x, wejscie);
+    wykresWyjscie->graph(0)->setData(x, wyjscie);
+    wykresWejscie->xAxis->setRange(*min_element(x.begin(), x.end()), *max_element(x.begin(), x.end()));
+    wykresWejscie->yAxis->setRange(*min_element(wejscie.begin(), wejscie.end()), *max_element(wejscie.begin(), wejscie.end()));
+    wykresWyjscie->xAxis->setRange(*min_element(x.begin(), x.end()), *max_element(x.begin(), x.end()));
+    wykresWyjscie->yAxis->setRange(*min_element(wyjscie.begin(), wyjscie.end()), *max_element(wyjscie.begin(), wyjscie.end()));
+    wykresWejscie->replot();
+    wykresWyjscie->replot();
 }
 
 void Gui::loadFromFile()
@@ -73,22 +86,32 @@ void Gui::loadFromFile()
                  file.errorString());
              return;
          } else {
-            konfig.czytaj(fileName.toStdString());
-            ObiektARX arx(konfig.k, konfig.A, konfig.B);
-            const long maksymalneWejscie = 5;
-            const double krok = 0.1;
-            
-            double wejscie;
-            double wyjscie;
-            QVector<double> x, y;
-            for(double i = 0.1; i < maksymalneWejscie; i+= krok){
-                wejscie = i;
-                wyjscie = arx.symuluj(wejscie);
-                x.push_back(i);
-                y.push_back(wyjscie);
-                cout << "Wejscie: " << wejscie << " Wyjscie: " << wyjscie << endl;
-            }
-            redrawPlot(x,y);
+            konfiguracja config;
+            config.czytaj(fileName.toStdString());
+            run(config);
          }
      }
+}
+
+void Gui::run(konfiguracja config)
+{
+    ObiektARX arx(config.k, config.A, config.B);
+    const long liczbaProbek = 10;
+    const long maxRand = 10;
+    srand(time(NULL));
+
+    double wej;
+    double wyj;
+    QVector<double> x, wejscie, wyjscie;
+
+    for(int i = 1; i < liczbaProbek; i++){
+        x.push_back(i);
+        wej = (random() % maxRand);
+        wyj = arx.symuluj(wej);
+        wyjscie.push_back(wyj);
+        wejscie.push_back(wej);
+        cout << "Wejscie: " << wej << " Wyjscie: " << wyj << endl;
+    }
+
+    redrawPlot(x, wejscie, wyjscie);
 }

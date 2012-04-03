@@ -31,10 +31,11 @@ class Gui : public QWidget
     private:
         void createConfigButton(QLayout *layout);
         void createPlot(QLayout *layout);
-        void redrawPlot(QVector<double> x, QVector<double> y);
+        void redrawPlot(QVector<double> x, QVector<double> wejscie, QVector<double> wyjscie);
+        void run(konfiguracja config);
         QPushButton *loadButton;
-        QCustomPlot *customPlot;
-        konfiguracja konfig;
+        QCustomPlot *wykresWejscie;
+        QCustomPlot *wykresWyjscie;
 };
 
 #endif	/* GUI_H */
