@@ -17,9 +17,13 @@
       <itemPath>config.ini</itemPath>
       <itemPath>generator.cpp</itemPath>
       <itemPath>generator.h</itemPath>
+      <itemPath>konfiguracja.cpp</itemPath>
+      <itemPath>konfiguracja.h</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>obiekt.cpp</itemPath>
       <itemPath>obiekt.h</itemPath>
+      <itemPath>qcustomplot.cpp</itemPath>
+      <itemPath>qcustomplot.h</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"

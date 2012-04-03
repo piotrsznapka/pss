@@ -9,15 +9,15 @@
 #define	GUI_H
 
 #include <QWidget>
+#include <QLayout>
 #include <QGridLayout>
 #include <QPushButton>
 #include <QString>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/ini_parser.hpp>
-#include <boost/algorithm/string.hpp>
 #include <stdlib.h>
+#include "konfiguracja.h"
+#include "qcustomplot.h"
 
 class Gui : public QWidget
 {
@@ -28,8 +28,10 @@ class Gui : public QWidget
     public slots:
         void loadFromFile();
     private:
+        void createConfigButton(QLayout *layout);
+        void createPlot(QLayout *layout);
         QPushButton *loadButton;
-
+        konfiguracja konfig;
 };
 
 #endif	/* GUI_H */
