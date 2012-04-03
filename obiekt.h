@@ -16,10 +16,10 @@ class ObiektARX : public ObiektWeWy {
       public:
               ObiektARX(int k ,vector <double>  WielomianA, vector <double>  WielomianB );
               double symuluj (double wej);
-              double c;
+
               
       private:
-              int k,dA,dB;
+              int k1,dA,dB;
               vector <double> W_A;
               vector <double> W_B;
               vector <double> ProbkiY;
@@ -30,7 +30,7 @@ class ObiektARX : public ObiektWeWy {
 class Wielomian {
       
       public:
-             Wielomian(vector<double>Wspolczynniki);
+             Wielomian(vector<double>Wspolczynniki,int k);
              double oblicz_wartosc(vector<double>Probki);
       private:
               int d;

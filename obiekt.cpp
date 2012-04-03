@@ -2,52 +2,57 @@
 #include <iostream>
 #include "generator.h"
 
-
-using namespace std;
-
 // konstruktor obiektu ARX
  ObiektARX::ObiektARX(int k ,vector<double> WielomianA, vector<double>  WielomianB)
     { 
     dA = WielomianA.size();
-    dB = WielomianB.size();
+    dB = WielomianB.size()-1;
     W_A = WielomianA;
     W_B = WielomianB;
+    k1 = k;
+    cout<<"dA = "<<dA<<endl;
+    cout<<"dB = "<<dB<<endl;
     
-    for(int i=0;i<dA;i++){
+    //warunki poczatkowe
+    for(int i=0;i<dA;++i){
             ProbkiY.push_back(0);
+             cout<<"warunki poczatkowe: Y["<<i<<"] = "<<ProbkiY[i]<<endl;
            }
-    for(int i=0;i<dB;i++){
+    for(int i=0;i<(dB+k1);++i){
              ProbkiU.push_back(0);
+             cout<<"warunki poczatkowe: U["<<i-k+1<<"] = "<<ProbkiU[i]<<endl;
            }
+    cout<<endl;
     }
  // definicja funkcji symuluj
  double ObiektARX::symuluj(double wej) {
         
         double wyj;
-        Wielomian A (W_A);
-        Wielomian B (W_B);
+        Wielomian A (W_A,k1);
+        Wielomian B (W_B,k1);
         double BialySzum;
         double wynikA;
         double wynikB;
         
-        //Generowanie bia鲁ego szumu
+        //Generowanie bia砮go szumu
         Generator * wsk = Generator::egzemplarz();
-        BialySzum =  wsk->losuj(1);
+        BialySzum =  wsk->losuj(0.01);
         
-        //obliczanie wartoscie wielomian贸w dla znanych pr贸bek
+        //obliczanie wartoscie wielomian體 dla znanych pr骲ek
         wynikA = A.oblicz_wartosc(ProbkiY);
         wynikB = B.oblicz_wartosc(ProbkiU);
         
-        //pr贸bka wyj聹ciowa
-        wyj = wynikB - wynikA;
+        //pr骲ka wyj渃iowa
+        wyj = wynikB - wynikA + BialySzum;
         
-        //aktualizacja pr贸bek
+        //aktualizacja pr骲ek wyjsciowych
         for(int i = dA-1 ; i>0 ; i-- ){
                 ProbkiY[i]=ProbkiY[i-1];
                 }
         ProbkiY[0]=wyj;
-               
-        for(int i = dB-1 ; i>0 ; i--){
+        
+        //aktualizacja pr骲ek wejsciowcyh      
+        for(int i = dB+k1-1 ; i>0 ; i--){
                 ProbkiU[i]=ProbkiU[i-1];
                 }
         ProbkiU[0]=wej;
@@ -55,23 +60,22 @@ using namespace std;
     return wyj;
 }
 // konstruktor wielomianu
- Wielomian::Wielomian(vector<double>Wspolczynniki){
-                                                   
+ Wielomian::Wielomian(vector<double>Wspolczynniki, int k){
+                                                                                                  
    d = Wspolczynniki.size();
-   Wsp = Wspolczynniki;                                                                                                  
+   Wsp = Wspolczynniki; 
+   k=k;                                                                                                 
  }
  
- // definicja funkcji do obliczania wartosci wielomianu dla zadanej pr贸bki                                                   
+ // definicja funkcji do obliczania wartosci wielomianu dla zadanej pr骲ki                                                   
  double Wielomian::oblicz_wartosc(vector<double>Probki){
         
         double wynik;
         int i;
-        //cout << "d = " << d << endl;
         for (i=0;i<d;i++){
-            //cout << "Wspolczynnik  = " << Wsp[i] << endl;
-            cout << "Probka = " << Probki[i] << endl;
             wynik += Wsp[i] * Probki[i];
-        }
-        
+            }
+                      
         return wynik;
         }
+

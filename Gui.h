@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include "konfiguracja.h"
 #include "qcustomplot.h"
+#include <time.h>
 
 class Gui : public QWidget
 {
@@ -30,7 +31,9 @@ class Gui : public QWidget
     private:
         void createConfigButton(QLayout *layout);
         void createPlot(QLayout *layout);
+        void redrawPlot(QVector<double> x, QVector<double> y);
         QPushButton *loadButton;
+        QCustomPlot *customPlot;
         konfiguracja konfig;
 };
 

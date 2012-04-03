@@ -11,12 +11,8 @@
 #include "obiekt.h"
 #include <qapplication.h>
 #include <qlayout.h>
-#include <math.h>
-#include <qt4/QtGui/qtoolbar.h>
-
 
 using namespace std;
-
 
 
 Gui::Gui(QWidget *parent) : QWidget(parent)
@@ -38,28 +34,28 @@ void Gui::createConfigButton(QLayout *layout)
 
 void Gui::createPlot(QLayout* layout)
 {
-    QCustomPlot *customPlot = new QCustomPlot();
+    customPlot = new QCustomPlot();
     customPlot->setMinimumHeight(500);
     customPlot->setMinimumWidth(500);
-    // generate some data:
-    QVector<double> x(101), y(101); // initialize with 101 entries
-    for (int i=0; i<101; ++i)
-    {
-        x[i] = i/50.0 - 1; // x goes from -1 to 1
-        y[i] = x[i]*x[i]; // let's plot a quadratic function
-    }
     
     customPlot->addGraph();
-    customPlot->graph(0)->setData(x, y);
-    // give the axes some labels:
+    //customPlot->graph(0)->setData(x, y);
+    
     customPlot->xAxis->setLabel("x");
     customPlot->yAxis->setLabel("y");
-    // set axes ranges, so we see all data:
-    customPlot->xAxis->setRange(-1, 1);
-    customPlot->yAxis->setRange(0, 1);
+    customPlot->xAxis->setRange(0, 5);
+    customPlot->yAxis->setRange(-5, -5);
     customPlot->replot();
 
     layout->addWidget(customPlot);
+}
+
+void Gui::redrawPlot(QVector<double> x, QVector<double> y)
+{
+    customPlot->graph(0)->setData(x, y);
+    customPlot->xAxis->setRange(*min_element(x.begin(), x.end()), *max_element(x.begin(), x.end()));
+    customPlot->yAxis->setRange(*min_element(y.begin(), y.end()), *max_element(y.begin(), y.end()));
+    customPlot->replot();
 }
 
 void Gui::loadFromFile()
@@ -79,12 +75,20 @@ void Gui::loadFromFile()
          } else {
             konfig.czytaj(fileName.toStdString());
             ObiektARX arx(konfig.k, konfig.A, konfig.B);
-            double wejscie = 3;
+            const long maksymalneWejscie = 5;
+            const double krok = 0.1;
+            
+            double wejscie;
             double wyjscie;
-            for(int i = 0;i<10;i++){
+            QVector<double> x, y;
+            for(double i = 0.1; i < maksymalneWejscie; i+= krok){
+                wejscie = i;
                 wyjscie = arx.symuluj(wejscie);
-                cout << "Wyjscie = " << wyjscie << endl;
+                x.push_back(i);
+                y.push_back(wyjscie);
+                cout << "Wejscie: " << wejscie << " Wyjscie: " << wyjscie << endl;
             }
+            redrawPlot(x,y);
          }
      }
 }
