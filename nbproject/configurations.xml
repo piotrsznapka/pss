@@ -18,6 +18,8 @@
       <itemPath>config2.ini</itemPath>
       <itemPath>generator.cpp</itemPath>
       <itemPath>generator.h</itemPath>
+      <itemPath>generatory_wejscia.cpp</itemPath>
+      <itemPath>generatory_wejscia.h</itemPath>
       <itemPath>konfiguracja.cpp</itemPath>
       <itemPath>konfiguracja.h</itemPath>
       <itemPath>main.cpp</itemPath>

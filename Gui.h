@@ -12,6 +12,7 @@
 #include <QLayout>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QComboBox>
 #include <QString>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -28,14 +29,19 @@ class Gui : public QWidget
         Gui(QWidget *parent = 0);
     public slots:
         void loadFromFile();
+        void changeGenerator();
     private:
         void createConfigButton(QLayout *layout);
+        void createTypGeneratoraCombo(QLayout *layout);
         void createPlot(QLayout *layout);
         void redrawPlot(QVector<double> x, QVector<double> wejscie, QVector<double> wyjscie);
-        void run(konfiguracja config);
+        void run(string typGeneratora);
         QPushButton *loadButton;
+        QComboBox *typGeneratoraCombo;
         QCustomPlot *wykresWejscie;
         QCustomPlot *wykresWyjscie;
+        konfiguracja config;
+        bool isConfigLoaded;
 };
 
 #endif	/* GUI_H */

@@ -2,14 +2,19 @@
 #define __OBIEKT_H__
 #include <string>
 #include <vector>
+#include <math.h>
+#include <iostream>
+#include "generator.h"
+#include "generatory_wejscia.h"
 using namespace std;
 
 // abstarkcyjna klasa Obiekt WeWy
-class ObiektWeWy {
-      public:
-             virtual double symuluj (double wej) = 0;
-      };
- 
+class ObiektWeWy
+{
+public:
+    virtual double symuluj (double wej) = 0;
+};
+
 // klasa Obiekt dyskretny ARX
 class ObiektARX : public ObiektWeWy {
       
@@ -44,25 +49,20 @@ class Regulator : public ObiektWeWy {
       
       public:
              virtual double symuluj (double wej)=0;
-             double GenWartZad(double Amplituda);  //sygna³ sta³y
-             double GenWartZad(int ChwilaSkoku);   //Skok jednostkowy
-             double GenWartZad(double Amplituda,int Okres,double Wypelnienie);//Prostok¹t
-             double GenWartZad(double Amplituda,int Okres);//Sinusoida
-             int ProbkiSinus;
-             int ProbkiSkok;
-             int ProbkiProstokat;
-             int l;
       private:
               vector<double> s_tab;
               unsigned int s_i;
              
 };
+
+
+
 //klasa Regulatora P
-class RegulatorP : public Regulator {
+class RegulatorP {
       
       public:
              RegulatorP(double k);
-             double symuluj(double wej);
+             double symuluj(double wej, double wartoscZadana);
              
       private:
               double s_k;

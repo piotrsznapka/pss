@@ -1,8 +1,4 @@
 #include "obiekt.h"
-#include <iostream>
-#include "generator.h"
-#include <math.h>
-#define PI 3.14159265
 
 using namespace std;
 
@@ -38,24 +34,24 @@ using namespace std;
         double wynikA;
         double wynikB;
         
-        //Generowanie bia³ego szumu
+        //Generowanie biaï¿½ego szumu
         Generator * wsk = Generator::egzemplarz();
         BialySzum =  wsk->losuj(0.01);
         
-        //obliczanie wartoscie wielomianów dla znanych próbek
+        //obliczanie wartoscie wielomianï¿½w dla znanych prï¿½bek
         wynikA = A.oblicz_wartosc(ProbkiY);
         wynikB = B.oblicz_wartosc(ProbkiU);
         
-        //próbka wyjœciowa
+        //prï¿½bka wyjï¿½ciowa
         wyj = wynikB - wynikA;// + BialySzum;
         
-        //aktualizacja próbek wyjsciowych
+        //aktualizacja prï¿½bek wyjsciowych
         for(int i = dA-1 ; i>0 ; i-- ){
                 ProbkiY[i]=ProbkiY[i-1];
                 }
         ProbkiY[0]=wyj;
         
-        //aktualizacja próbek wejsciowcyh      
+        //aktualizacja prï¿½bek wejsciowcyh      
         for(int i = dB+k1-1 ; i>0 ; i--){
                 ProbkiU[i]=ProbkiU[i-1];
                 }
@@ -71,7 +67,7 @@ using namespace std;
    k=k;                                                                                                 
  }
  
- // definicja funkcji do obliczania wartosci wielomianu dla zadanej próbki                                                   
+ // definicja funkcji do obliczania wartosci wielomianu dla zadanej prï¿½bki                                                   
  double Wielomian::oblicz_wartosc(vector<double>Probki){
         
         double wynik;
@@ -84,73 +80,18 @@ using namespace std;
         }
         
 // konstruktor Regulatora P
- RegulatorP::RegulatorP(double k){ 
+ RegulatorP::RegulatorP(double k)
+ { 
       s_k = k;
-      ProbkiSinus = 1;
-      ProbkiSkok = 1;
-      ProbkiProstokat = 1;
-      l = 0;
-       }
+}
  
 // definicja funkcji do wyznaczania wartosci sterowania     
-double RegulatorP::symuluj(double wej) { 
-       
+double RegulatorP::symuluj(double wej, double wartoscZadana)
+{       
        double WartoscSterowania;
        double Uchyb;
-       double WartoscZadana;
        
-       WartoscZadana = GenWartZad(5.0);
-       Uchyb = WartoscZadana - wej;      // wyznaczenie uchybu : gdzie wej jest sygnalem wyjsciowym z obiektu dyskretnego
-       WartoscSterowania = s_k * Uchyb;  // wyznaczenie wartosci sterowania u(i) która wchodzi na wejscie obiektu dyskretnego
-        return WartoscZadana;
-       }  
-       
-//sygna³ sta³y     
-double Regulator::GenWartZad(double Amplituda){         
-       return Amplituda;
-       }
-           
-//Skok jednostkowy
-double Regulator::GenWartZad(int ChwilaSkoku){          
-       
-       double Wartosc;
-       if(ChwilaSkoku == ProbkiSkok) {
-                      Wartosc =  1;
-                      }
-       else {
-            ProbkiSkok++;
-            Wartosc = 0;
-            }  
-       return Wartosc;
-       }
-       
-//Prostok¹t       
-double Regulator::GenWartZad(double Amplituda,int Okres, double Wypelnienie){    
-       
-       double Wartosc;
-      
-       if(ProbkiProstokat <= ((Okres/2)+ (l*Okres)) && ProbkiProstokat > (0+l*Okres) )  {        
-                        Wartosc = Amplituda;             
-                        }
-       else{ 
-            
-            Wartosc = (0 - Amplituda);
-            }
-      
-       ProbkiProstokat++;
-       if( ProbkiProstokat == ((l+1)*Okres) ){
-           l++;
-           }
-     return Wartosc;
-       }      
-        
-//Sinusoida       
-double Regulator::GenWartZad(double Amplituda,int Okres){     
-      
-       double Wartosc;
-       Wartosc = Amplituda * sin( ((2*PI) / Okres)*ProbkiSinus );
-       ProbkiSinus++;
-       return Wartosc;
-
-       }            
-                            
+       Uchyb = wartoscZadana - wej;      // wyznaczenie uchybu : gdzie wej jest sygnalem wyjsciowym z obiektu dyskretnego
+       WartoscSterowania = s_k * Uchyb;  // wyznaczenie wartosci sterowania u(i) ktï¿½ra wchodzi na wejscie obiektu dyskretnego
+       return WartoscSterowania;
+}

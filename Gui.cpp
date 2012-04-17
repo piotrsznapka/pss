@@ -11,16 +11,19 @@
 #include "obiekt.h"
 #include <qapplication.h>
 #include <qlayout.h>
+#include <qt4/QtGui/qcombobox.h>
 
 using namespace std;
 
 
 Gui::Gui(QWidget *parent) : QWidget(parent)
 {
+    isConfigLoaded = false;
     QGridLayout *layout = new QGridLayout();
     setLayout(layout);   
     setWindowTitle("Regulator");
     createConfigButton(layout);
+    createTypGeneratoraCombo(layout);
     createPlot(layout);
 
 }
@@ -32,6 +35,27 @@ void Gui::createConfigButton(QLayout *layout)
     layout->addWidget(loadButton);    
 }
 
+
+void Gui::createTypGeneratoraCombo(QLayout *layout)
+{
+    typGeneratoraCombo = new QComboBox();
+    typGeneratoraCombo->addItem("prostokatny", QVariant("prostokatny"));
+    typGeneratoraCombo->addItem("skok", QVariant("skok"));
+    typGeneratoraCombo->addItem("staly", QVariant("staly"));
+    typGeneratoraCombo->addItem("sinusoidalny", QVariant("sinusoidalny"));
+    typGeneratoraCombo->addItem("sraka", QVariant("sraka"));
+    connect(typGeneratoraCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(changeGenerator()));
+    layout->addWidget(typGeneratoraCombo);
+}
+
+void Gui::changeGenerator()
+{
+    string typGeneratora = typGeneratoraCombo->itemData(typGeneratoraCombo->currentIndex()).toString().toStdString();
+    cout << "change Generator " << typGeneratora << endl;
+    if (isConfigLoaded) {
+        run(typGeneratora);
+    }
+}
 void Gui::createPlot(QLayout* layout)
 {
     wykresWejscie = new QCustomPlot();
@@ -86,32 +110,50 @@ void Gui::loadFromFile()
                  file.errorString());
              return;
          } else {
-            konfiguracja config;
             config.czytaj(fileName.toStdString());
-            run(config);
+            isConfigLoaded = true;
+            string typGeneratora = typGeneratoraCombo->itemData(typGeneratoraCombo->currentIndex()).toString().toStdString();
+            run(typGeneratora);
          }
      }
 }
-
-void Gui::run(konfiguracja config)
+void Gui::run(string typGeneratora)
 {
-    ObiektARX arx(config.k, config.A, config.B);
-    const long liczbaProbek = 10;
-    const long maxRand = 10;
-    srand(time(NULL));
+    try {
+        ObiektARX arx(config.k, config.A, config.B);
+        RegulatorP regulatorP(2);
+        const long liczbaProbek = 100;
 
-    double wej;
-    double wyj;
-    QVector<double> x, wejscie, wyjscie;
+        FabrykaGenerator fabryka;
+        ParametryGeneratora parametryGeneratora;
+        GeneratorWejscia* generatorWejscia = fabryka.pobierzGenerator(typGeneratora, 1, 0);
+        generatorWejscia->Probki = 1;
+        generatorWejscia->l = 0;
 
-    for(int i = 1; i < liczbaProbek; i++){
-        x.push_back(i);
-        wej = 5;
-        wyj = arx.symuluj(wej);
-        wyjscie.push_back(wyj);
-        wejscie.push_back(wej);
-        cout << "Wejscie: " << wej << " Wyjscie: " << wyj << endl;
+        parametryGeneratora.Amplituda = 5.0;
+        parametryGeneratora.ChwilaSkoku = 1;
+        parametryGeneratora.Okres = 1;
+        parametryGeneratora.Wypelnienie = 5.0;
+
+        double wej = 0;
+        double wyj;
+
+        QVector<double> x, wejscie, wyjscie;
+
+        for(int i = 1; i < liczbaProbek; i++){
+            x.push_back(i);
+            wyj = arx.symuluj(regulatorP.symuluj(wej, generatorWejscia->GenWartZad(parametryGeneratora)));
+            wyjscie.push_back(wyj);
+            wejscie.push_back(wej);
+            cout << "Wejscie: " << wej << " Wyjscie: " << wyj << endl;
+            wej = wyj; // zapętlenie regulatorów
+        }
+
+        redrawPlot(x, wejscie, wyjscie);
+    } catch (string exception) {
+        cout << "Wystapil wyjatek: " << exception << endl;
+        QMessageBox msgBox;
+        msgBox.setText("Wystapil blad");
+        msgBox.exec();
     }
-        
-    redrawPlot(x, wejscie, wyjscie);
 }
