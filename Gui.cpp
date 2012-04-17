@@ -43,7 +43,7 @@ void Gui::createTypGeneratoraCombo(QLayout *layout)
     typGeneratoraCombo->addItem("skok", QVariant("skok"));
     typGeneratoraCombo->addItem("staly", QVariant("staly"));
     typGeneratoraCombo->addItem("sinusoidalny", QVariant("sinusoidalny"));
-    typGeneratoraCombo->addItem("sraka", QVariant("sraka"));
+    typGeneratoraCombo->addItem("Nie istniejacy typ", QVariant("ni ma"));
     connect(typGeneratoraCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(changeGenerator()));
     layout->addWidget(typGeneratoraCombo);
 }
