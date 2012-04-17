@@ -1,0 +1,36 @@
+# Project: Projekt1
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = main.o obiekt.o generator.o $(RES)
+LINKOBJ  = main.o obiekt.o generator.o $(RES)
+LIBS =  -L"F:/PROGRAMY/Internet/Dev-Cpp/lib" -L"F:/PROGRAMY/Internet/QTlibrary/lib"  
+INCS =  -I"F:/PROGRAMY/Internet/Dev-Cpp/include" 
+CXXINCS =  -I"F:/PROGRAMY/Internet/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"F:/PROGRAMY/Internet/Dev-Cpp/include/c++/3.4.2/backward"  -I"F:/PROGRAMY/Internet/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"F:/PROGRAMY/Internet/Dev-Cpp/include/c++/3.4.2"  -I"F:/PROGRAMY/Internet/Dev-Cpp/include"  -I"F:/PROGRAMY/Internet/QTlibrary/include"  -I"F:/PROGRAMY/Internet/QTlibrary/include/ActiveQt"  -I"F:/PROGRAMY/Internet/QTlibrary/include/phonon"  -I"F:/PROGRAMY/Internet/QTlibrary/include/Qt"  -I"F:/PROGRAMY/Internet/QTlibrary/include/Qt3Support"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtCore"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtDBus"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtDeclarative"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtDesigner"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtGui"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtHelp"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtMeeGoGraphicsSystemHelper"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtMultimedia"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtNetwork"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtOpenGL"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtOpenVG"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtScript"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtScriptTools"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtSql"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtSvg"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtTest"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtUiTools"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtWebKit"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtXml"  -I"F:/PROGRAMY/Internet/QTlibrary/include/QtXmlPatterns" 
+BIN  = Projekt1.exe
+CXXFLAGS = $(CXXINCS)  
+CFLAGS = $(INCS)  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before Projekt1.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "Projekt1.exe" $(LIBS)
+
+main.o: main.cpp
+	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
+
+obiekt.o: obiekt.cpp
+	$(CPP) -c obiekt.cpp -o obiekt.o $(CXXFLAGS)
+
+generator.o: generator.cpp
+	$(CPP) -c generator.cpp -o generator.o $(CXXFLAGS)

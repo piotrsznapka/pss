@@ -15,6 +15,7 @@
       <itemPath>Gui.cpp</itemPath>
       <itemPath>Gui.h</itemPath>
       <itemPath>config.ini</itemPath>
+      <itemPath>config2.ini</itemPath>
       <itemPath>generator.cpp</itemPath>
       <itemPath>generator.h</itemPath>
       <itemPath>konfiguracja.cpp</itemPath>

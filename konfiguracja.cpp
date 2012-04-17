@@ -33,5 +33,7 @@ vector<double> konfiguracja::czytajWektor(string zmienna) {
         wynik.push_back(strtod(wektor[i].c_str(), NULL));
     }
     cout << "Wektor " << zmienna << " posiada: " << wynik.size()  << endl;
+//    cout << "A=" << A(0) << endl;
+//    cout << "B=" << B(0) << endl;
     return wynik;
 }
