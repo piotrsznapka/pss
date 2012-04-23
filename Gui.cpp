@@ -9,6 +9,7 @@
 
 #include "Gui.h"
 #include "obiekt.h"
+#include "symulacja.h"
 #include <qapplication.h>
 #include <qlayout.h>
 #include <qt4/QtGui/qcombobox.h>
@@ -24,8 +25,11 @@ Gui::Gui(QWidget *parent) : QWidget(parent)
     setWindowTitle("Regulator");
     createConfigButton(layout);
     createTypGeneratoraCombo(layout);
+    createInterwalTextEdit(layout);
     createPlot(layout);
-
+    
+    timer = new QTimer();
+    connect(timer, SIGNAL(timeout()), this, SLOT(run()));
 }
 
 void Gui::createConfigButton(QLayout *layout)
@@ -48,12 +52,35 @@ void Gui::createTypGeneratoraCombo(QLayout *layout)
     layout->addWidget(typGeneratoraCombo);
 }
 
+void Gui::createInterwalTextEdit(QLayout *layout)
+{
+    QHBoxLayout *hlayout = new QHBoxLayout;
+    QGroupBox *box = new QGroupBox;
+    interwalText = new QLineEdit();
+    interwalText->setText("500");
+    QLabel* label = new QLabel(tr("Interwal probkowania (ms)"));
+    zmienInterwal = new QPushButton("Zmien interwal");    
+    connect(zmienInterwal, SIGNAL(clicked()), this, SLOT(changeInterwal()));
+    
+    hlayout->addWidget(label);
+    hlayout->addWidget(interwalText);
+    hlayout->addWidget(zmienInterwal);
+    box->setLayout(hlayout);
+    layout->addWidget(box);
+}
 void Gui::changeGenerator()
 {
     string typGeneratora = typGeneratoraCombo->itemData(typGeneratoraCombo->currentIndex()).toString().toStdString();
     cout << "change Generator " << typGeneratora << endl;
     if (isConfigLoaded) {
-        run(typGeneratora);
+        startSim();
+    }
+}
+
+void Gui::changeInterwal()
+{
+    if (isConfigLoaded) {
+        startSim();
     }
 }
 void Gui::createPlot(QLayout* layout)
@@ -88,7 +115,7 @@ void Gui::redrawPlot(QVector<double> x, QVector<double> wejscie, QVector<double>
     wykresWejscie->graph(0)->setData(x, wejscie);
     wykresWyjscie->graph(0)->setData(x, wyjscie);
     wykresWejscie->xAxis->setRange(*min_element(x.begin(), x.end()), *max_element(x.begin(), x.end()) + 1);
-    wykresWejscie->yAxis->setRange(0, *max_element(wejscie.begin(), wejscie.end()) + 1);
+    wykresWejscie->yAxis->setRange(*min_element(wejscie.begin(), wejscie.end()), *max_element(wejscie.begin(), wejscie.end()) + 1);
     wykresWyjscie->xAxis->setRange(*min_element(x.begin(), x.end()), *max_element(x.begin(), x.end()) + 1);
     wykresWyjscie->yAxis->setRange(*min_element(wyjscie.begin(), wyjscie.end()), *max_element(wyjscie.begin(), wyjscie.end()) + 1);
     wykresWejscie->replot();
@@ -97,59 +124,49 @@ void Gui::redrawPlot(QVector<double> x, QVector<double> wejscie, QVector<double>
 
 void Gui::loadFromFile()
 {
-     QString fileName = QFileDialog::getOpenFileName(this,
-         tr("Otworz konfiguracje z pliku INI"), "",
-         tr("INI (*.ini);;All Files (*)"));
+    QString fileName = QFileDialog::getOpenFileName(this,
+        tr("Otworz konfiguracje z pliku INI"), "",
+        tr("INI (*.ini);;All Files (*)"));
 
-     if (fileName.isEmpty()) {
-         return;
-     } else {
-         QFile file(fileName);
-         if (!file.open(QIODevice::ReadOnly)) {
-             QMessageBox::information(this, tr("Nie mozna otworzyc pliku"),
-                 file.errorString());
-             return;
-         } else {
+    if (fileName.isEmpty()) {
+        return;
+    } else {
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly)) {
+            QMessageBox::information(this, tr("Nie mozna otworzyc pliku"),
+                file.errorString());
+            return;
+        } else {
             config.czytaj(fileName.toStdString());
             isConfigLoaded = true;
-            string typGeneratora = typGeneratoraCombo->itemData(typGeneratoraCombo->currentIndex()).toString().toStdString();
-            run(typGeneratora);
-         }
-     }
+            startSim();
+        }
+    }
 }
-void Gui::run(string typGeneratora)
+
+void Gui::startSim()
+{
+    string typGeneratora = typGeneratoraCombo->itemData(
+            typGeneratoraCombo->currentIndex()).toString().toStdString();
+
+    sim.init(config, typGeneratora);
+    timer->stop();
+    timer->start(interwalText->text().toInt());
+    cout << "Uruchamiam z typem generatora: " << typGeneratora
+         << " i interwalem: " << interwalText->text().toStdString() << endl;    
+}
+
+void Gui::run()
 {
     try {
-        ObiektARX arx(config.k, config.A, config.B);
-        RegulatorP regulatorP(2);
-        const long liczbaProbek = 100;
+        xVector.push_back(x);
+        wynikSymulacji wynik = sim.symuluj(wejscie);
+        wyjscieVector.push_back(wynik.wyjscieGeneratora);
+        wejscieVector.push_back(wynik.wyjscie);
+        wejscie = wynik.wyjscie; // zapętlenie regulatorów
 
-        FabrykaGenerator fabryka;
-        ParametryGeneratora parametryGeneratora;
-        GeneratorWejscia* generatorWejscia = fabryka.pobierzGenerator(typGeneratora, 1, 0);
-        generatorWejscia->Probki = 1;
-        generatorWejscia->l = 0;
-
-        parametryGeneratora.Amplituda = 5.0;
-        parametryGeneratora.ChwilaSkoku = 1;
-        parametryGeneratora.Okres = 1;
-        parametryGeneratora.Wypelnienie = 5.0;
-
-        double wej = 0;
-        double wyj;
-
-        QVector<double> x, wejscie, wyjscie;
-
-        for(int i = 1; i < liczbaProbek; i++){
-            x.push_back(i);
-            wyj = arx.symuluj(regulatorP.symuluj(wej, generatorWejscia->GenWartZad(parametryGeneratora)));
-            wyjscie.push_back(wyj);
-            wejscie.push_back(wej);
-            cout << "Wejscie: " << wej << " Wyjscie: " << wyj << endl;
-            wej = wyj; // zapętlenie regulatorów
-        }
-
-        redrawPlot(x, wejscie, wyjscie);
+        x += timer->interval();
+        redrawPlot(xVector, wyjscieVector, wejscieVector);
     } catch (string exception) {
         cout << "Wystapil wyjatek: " << exception << endl;
         QMessageBox msgBox;

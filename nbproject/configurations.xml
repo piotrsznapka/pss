@@ -27,6 +27,8 @@
       <itemPath>obiekt.h</itemPath>
       <itemPath>qcustomplot.cpp</itemPath>
       <itemPath>qcustomplot.h</itemPath>
+      <itemPath>symulacja.cpp</itemPath>
+      <itemPath>symulacja.h</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"

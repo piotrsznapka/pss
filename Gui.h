@@ -20,6 +20,12 @@
 #include "konfiguracja.h"
 #include "qcustomplot.h"
 #include <time.h>
+#include <QHBoxLayout>
+#include <QLineEdit>
+#include <QLabel>
+#include <QGroupBox>
+#include "symulacja.h"
+#include <QTimer>
 
 class Gui : public QWidget
 {
@@ -30,19 +36,29 @@ class Gui : public QWidget
     public slots:
         void loadFromFile();
         void changeGenerator();
+        void run();
+        void changeInterwal();
     private:
         void createConfigButton(QLayout *layout);
         void createTypGeneratoraCombo(QLayout *layout);
+        void createInterwalTextEdit(QLayout *layout);
         void createPlot(QLayout *layout);
         void redrawPlot(QVector<double> x, QVector<double> wejscie, QVector<double> wyjscie);
-        void run(string typGeneratora);
+        void startSim();
+        
         QPushButton *loadButton;
+        QPushButton *zmienInterwal;
         QComboBox *typGeneratoraCombo;
+        QLineEdit *interwalText;
         QCustomPlot *wykresWejscie;
         QCustomPlot *wykresWyjscie;
+        QTimer* timer;
         konfiguracja config;
         bool isConfigLoaded;
+        int x;
+        double wejscie;
+        symulacja sim;
+        QVector<double> xVector, wejscieVector, wyjscieVector;
 };
 
 #endif	/* GUI_H */
-
