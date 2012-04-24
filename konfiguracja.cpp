@@ -7,19 +7,19 @@
 
 #include "konfiguracja.h"
 
-konfiguracja::konfiguracja() {
-}
-
 void konfiguracja::czytaj(string plik) {
     
     cout << "Czytam config z " << plik << endl;
     ini_parser::read_ini(plik, pt);
     
-    k = pt.get<int>("k");
-    cout << "Parametr k wynosi: " << k << endl;
-    
+    k  = pt.get<int>("k");
+    N  = pt.get<int>("N");
+    Ti = pt.get<int>("Ti");
+    Td = pt.get<int>("Td");
+    cout << "k: " << k << " N: " << N << " Ti: " << Ti << " Td: " << Td << endl;
+
     A = czytajWektor("A");
-    B = czytajWektor("B");        
+    B = czytajWektor("B");
 }
 
 vector<double> konfiguracja::czytajWektor(string zmienna) {
@@ -33,7 +33,6 @@ vector<double> konfiguracja::czytajWektor(string zmienna) {
         wynik.push_back(strtod(wektor[i].c_str(), NULL));
     }
     cout << "Wektor " << zmienna << " posiada: " << wynik.size()  << endl;
-//    cout << "A=" << A(0) << endl;
-//    cout << "B=" << B(0) << endl;
+    cout << zmienna << " [0]= " << wynik[0] << endl;
     return wynik;
 }

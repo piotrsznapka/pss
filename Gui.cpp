@@ -24,12 +24,13 @@ Gui::Gui(QWidget *parent) : QWidget(parent)
     setLayout(layout);   
     setWindowTitle("Regulator");
     createConfigButton(layout);
-    createTypGeneratoraCombo(layout);
+    createTypCombo(layout);
     createInterwalTextEdit(layout);
     createPlot(layout);
     
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(run()));
+    x = 0;
 }
 
 void Gui::createConfigButton(QLayout *layout)
@@ -40,7 +41,7 @@ void Gui::createConfigButton(QLayout *layout)
 }
 
 
-void Gui::createTypGeneratoraCombo(QLayout *layout)
+void Gui::createTypCombo(QLayout *layout)
 {
     typGeneratoraCombo = new QComboBox();
     typGeneratoraCombo->addItem("staly", QVariant("staly"));
@@ -48,8 +49,14 @@ void Gui::createTypGeneratoraCombo(QLayout *layout)
     typGeneratoraCombo->addItem("skok", QVariant("skok"));
     typGeneratoraCombo->addItem("sinusoidalny", QVariant("sinusoidalny"));
     typGeneratoraCombo->addItem("Nie istniejacy typ", QVariant("ni ma"));
-    connect(typGeneratoraCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(changeGenerator()));
+    connect(typGeneratoraCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(startSim()));
     layout->addWidget(typGeneratoraCombo);
+    
+    typRegulatoraCombo = new QComboBox();
+    typRegulatoraCombo->addItem("Regulator P", QVariant("p"));
+    typRegulatoraCombo->addItem("Regulator PID", QVariant("pid"));
+    connect(typRegulatoraCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(startSim()));
+    layout->addWidget(typRegulatoraCombo);
 }
 
 void Gui::createInterwalTextEdit(QLayout *layout)
@@ -60,7 +67,7 @@ void Gui::createInterwalTextEdit(QLayout *layout)
     interwalText->setText("100");
     QLabel* label = new QLabel(tr("Interwal probkowania (ms)"));
     zmienInterwal = new QPushButton("Zmien interwal");    
-    connect(zmienInterwal, SIGNAL(clicked()), this, SLOT(changeInterwal()));
+    connect(zmienInterwal, SIGNAL(clicked()), this, SLOT(startSim()));
     
     hlayout->addWidget(label);
     hlayout->addWidget(interwalText);
@@ -68,21 +75,7 @@ void Gui::createInterwalTextEdit(QLayout *layout)
     box->setLayout(hlayout);
     layout->addWidget(box);
 }
-void Gui::changeGenerator()
-{
-    string typGeneratora = typGeneratoraCombo->itemData(typGeneratoraCombo->currentIndex()).toString().toStdString();
-    cout << "change Generator " << typGeneratora << endl;
-    if (isConfigLoaded) {
-        startSim();
-    }
-}
 
-void Gui::changeInterwal()
-{
-    if (isConfigLoaded) {
-        startSim();
-    }
-}
 void Gui::createPlot(QLayout* layout)
 {
     wykresWejscie = new QCustomPlot();
@@ -150,26 +143,29 @@ void Gui::loadFromFile()
 
 void Gui::startSim()
 {
-    string typGeneratora = typGeneratoraCombo->itemData(
-            typGeneratoraCombo->currentIndex()).toString().toStdString();
+    if (isConfigLoaded) {
+        string typGeneratora = typGeneratoraCombo->itemData(
+                typGeneratoraCombo->currentIndex()).toString().toStdString();
+        string typRegulatora = typRegulatoraCombo->itemData(
+                typRegulatoraCombo->currentIndex()).toString().toStdString();
 
-    sim.init(config, typGeneratora);
-    timer->stop();
-    timer->start(interwalText->text().toInt());
-    cout << "Uruchamiam z typem generatora: " << typGeneratora
-         << " i interwalem: " << interwalText->text().toStdString() << endl;    
+        sim.init(config, typGeneratora, typRegulatora);
+        timer->stop();
+        timer->start(interwalText->text().toInt());
+        cout << "Uruchamiam z typem generatora: " << typGeneratora
+            << " i interwalem: " << interwalText->text().toStdString() << endl;
+    }
 }
 
 void Gui::run()
 {
     try {
-        xVector.push_back(x);
-        wynikSymulacji wynik = sim.symuluj(wejscie, x);
+        xVector.push_back(x++);
+        wynikSymulacji wynik = sim.symuluj(wejscie);
         wyjscieVector.push_back(wynik.wyjscieGeneratora);
         wejscieVector.push_back(wynik.wyjscie);
         wejscie = wynik.wyjscie; // zapętlenie regulatorów
 
-        x += timer->interval();
         redrawPlot(xVector, wyjscieVector, wejscieVector);
     } catch (string exception) {
         cout << "Wystapil wyjatek: " << exception << endl;

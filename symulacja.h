@@ -11,6 +11,7 @@
 #include "generatory_wejscia.h"
 #include "konfiguracja.h"
 #include "obiekt.h"
+#include "fabryki.h"
 
 using namespace std;
 
@@ -23,20 +24,25 @@ public:
 class symulacja {
 public:
     symulacja();
-    wynikSymulacji symuluj(double wejscie, int probka);
+    wynikSymulacji symuluj(double wejscie);
     void setTypGeneratora(string typ);
+    void setTypRegulatora(string typ);
     void setConfig(konfiguracja config);
-    void init(konfiguracja config, string typ);
+    void init(konfiguracja config, string typGeneratora, string typRegulatora);
     void init();
 private:
+    int licznik;
+    
     string typGeneratora;
+    string typRegulatora;
     konfiguracja config;
     
     ParametryGeneratora parametryGeneratora;
-    FabrykaGenerator fabryka;
+    FabrykaGenerator fabrykaGenerator;
+    FabrykaRegulator fabrykaRegulator;
     
     ObiektARX* arx;
-    RegulatorP* regulator;
+    Regulator* regulator;
     GeneratorWejscia* generator;
 };
 

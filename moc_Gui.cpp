@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'Gui.h'
 **
-** Created: Tue Apr 24 22:02:16 2012
+** Created: Wed Apr 25 00:31:28 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_Gui[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       3,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -33,15 +33,13 @@ static const uint qt_meta_data_Gui[] = {
  // slots: signature, parameters, type, tag, flags
        5,    4,    4,    4, 0x0a,
       20,    4,    4,    4, 0x0a,
-      38,    4,    4,    4, 0x0a,
-      44,    4,    4,    4, 0x0a,
+      31,    4,    4,    4, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_Gui[] = {
-    "Gui\0\0loadFromFile()\0changeGenerator()\0"
-    "run()\0changeInterwal()\0"
+    "Gui\0\0loadFromFile()\0startSim()\0run()\0"
 };
 
 const QMetaObject Gui::staticMetaObject = {
@@ -74,12 +72,11 @@ int Gui::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: loadFromFile(); break;
-        case 1: changeGenerator(); break;
+        case 1: startSim(); break;
         case 2: run(); break;
-        case 3: changeInterwal(); break;
         default: ;
         }
-        _id -= 4;
+        _id -= 3;
     }
     return _id;
 }

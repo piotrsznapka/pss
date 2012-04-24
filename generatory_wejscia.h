@@ -52,11 +52,4 @@ class GeneratorSinusoidalny : public GeneratorWejscia
 public:
     double GenWartZad(double wejscie);
 };
-
-class FabrykaGenerator
-{
-public:
-    GeneratorWejscia* pobierzGenerator(string typ, ParametryGeneratora parametry);
-};
-
 #endif

@@ -45,10 +45,10 @@ class Wielomian {
       };
       
 //abstrakcyjna klasa Regulator
-class Regulator : public ObiektWeWy {
+class Regulator {
       
       public:
-             virtual double symuluj (double wej)=0;
+             virtual double symuluj (double wej, double wartoscZadana)=0;
       private:
               vector<double> s_tab;
               unsigned int s_i;
@@ -58,7 +58,7 @@ class Regulator : public ObiektWeWy {
 
 
 //klasa Regulatora P
-class RegulatorP {
+class RegulatorP : public Regulator{
       
       public:
              RegulatorP(double k);
@@ -69,4 +69,21 @@ class RegulatorP {
               
 };
 
+//klasa Regulatora PID
+class RegulatorPID : public Regulator {
+      
+      public:
+             RegulatorPID(double k, double Ti, double Td, int N);
+             double symuluj(double wej, double wartoscZadana);
+             
+      private:
+              double s_k;
+              double s_Ti;
+              double s_Td;
+              double I_probka;
+              double D_probka;
+              double wej_probka;
+              double s_N;
+              
+};
 #endif

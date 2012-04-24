@@ -35,20 +35,19 @@ class Gui : public QWidget
         Gui(QWidget *parent = 0);
     public slots:
         void loadFromFile();
-        void changeGenerator();
+        void startSim();
         void run();
-        void changeInterwal();
     private:
         void createConfigButton(QLayout *layout);
-        void createTypGeneratoraCombo(QLayout *layout);
+        void createTypCombo(QLayout *layout);
         void createInterwalTextEdit(QLayout *layout);
         void createPlot(QLayout *layout);
         void redrawPlot(QVector<double> x, QVector<double> wejscie, QVector<double> wyjscie);
-        void startSim();
         
         QPushButton *loadButton;
         QPushButton *zmienInterwal;
         QComboBox *typGeneratoraCombo;
+        QComboBox *typRegulatoraCombo;
         QLineEdit *interwalText;
         QCustomPlot *wykresWejscie;
         QCustomPlot *wykresWyjscie;

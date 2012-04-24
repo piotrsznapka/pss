@@ -36,24 +36,3 @@ double GeneratorSinusoidalny::GenWartZad(double wejscie)
 {     
        return parametry.Amplituda * sin(((2*M_PI) / parametry.Okres)*wejscie);
 }
-
-//Fabryka
-GeneratorWejscia* FabrykaGenerator::pobierzGenerator(string typ, ParametryGeneratora parametry)
-{
-    GeneratorWejscia* generator;
-    
-    if (typ == "staly") {
-        generator = new GeneratorSygnaluStalego();
-    } else if (typ == "skok") {
-        generator = new GeneratorSkokuJednostkowego();
-    } else if (typ == "prostokatny") {
-        generator = new GeneratorProstokatny();
-    } else if (typ == "sinusoidalny") {
-        generator = new GeneratorSinusoidalny();
-    } else {
-        throw "Nie znaleziono generatora o typie: " + typ;
-    }
-    
-    generator->parametry = parametry;
-    return generator;
-}

@@ -16,6 +16,8 @@
       <itemPath>Gui.h</itemPath>
       <itemPath>config.ini</itemPath>
       <itemPath>config2.ini</itemPath>
+      <itemPath>fabryki.cpp</itemPath>
+      <itemPath>fabryki.h</itemPath>
       <itemPath>generator.cpp</itemPath>
       <itemPath>generator.h</itemPath>
       <itemPath>generatory_wejscia.cpp</itemPath>

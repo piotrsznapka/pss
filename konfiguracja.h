@@ -19,10 +19,8 @@ using namespace boost::property_tree;
 
 class konfiguracja {
 public:
-    int k;
-    vector<double> A;
-    vector<double> B;
-    konfiguracja();
+    int k, Td, Ti, N;
+    vector<double> A, B;
     void czytaj(string plik);
 private:
     vector<double> czytajWektor(string zmienna);

@@ -9,28 +9,35 @@
 symulacja::symulacja()
 {
     parametryGeneratora.Amplituda = 5.0;
-    parametryGeneratora.ChwilaSkoku = 10;
-    parametryGeneratora.Okres = 10.0;
-    parametryGeneratora.Wypelnienie = 100.0;
+    parametryGeneratora.ChwilaSkoku = 1;
+    parametryGeneratora.Okres = 1;
+    parametryGeneratora.Wypelnienie = 5;
+    licznik = 0;
 
 }
 
-wynikSymulacji symulacja::symuluj(double wejscie, int probka)
+wynikSymulacji symulacja::symuluj(double wejscie)
 {
     wynikSymulacji wynik;
-    wynik.wyjscieGeneratora = generator->GenWartZad(probka / 100);
+    wynik.wyjscieGeneratora = generator->GenWartZad(licznik++);
     double wyjscieRegulatora = regulator->symuluj(wejscie, wynik.wyjscieGeneratora);
     wynik.wyjscie = arx->symuluj(wyjscieRegulatora);
 
     cout << "Wejscie:\t" << wejscie << "\tWyjscie generatora (typ: " 
             << typGeneratora << "):\t" << wynik.wyjscieGeneratora 
+            << "\tWyjscie regulatora (" << typRegulatora << "):\t" << wyjscieRegulatora
             << "\tWyjscie:\t" << wynik.wyjscie << endl;
     return wynik;
 }
 
 void symulacja::setTypGeneratora(string typ)
 {
-    this->typGeneratora = typ;
+    typGeneratora = typ;
+}
+
+void symulacja::setTypRegulatora(string typ)
+{
+    typRegulatora = typ;
 }
 
 void symulacja::setConfig(konfiguracja config)
@@ -38,16 +45,18 @@ void symulacja::setConfig(konfiguracja config)
     this->config = config;
 }
 
-void symulacja::init(konfiguracja config, string typ)
+void symulacja::init(konfiguracja config, string typGeneratora, string typRegulatora)
 {  
     setConfig(config);
-    setTypGeneratora(typ);    
+    setTypGeneratora(typGeneratora);
+    setTypRegulatora(typRegulatora);
     init();
 }
 
 void symulacja::init()
 {  
     arx = new ObiektARX(config.k, config.A, config.B);
-    regulator = new RegulatorP(config.k);
-    generator = fabryka.pobierzGenerator(typGeneratora, parametryGeneratora);
+    
+    regulator = fabrykaRegulator.pobierzRegulator(typRegulatora, config);
+    generator = fabrykaGenerator.pobierzGenerator(typGeneratora, parametryGeneratora);
 }
