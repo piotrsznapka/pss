@@ -12,8 +12,8 @@ class ParametryGeneratora
 {
 public:
     double Amplituda;
-    int ChwilaSkoku;
-    int Okres;
+    double ChwilaSkoku;
+    double Okres;
     double Wypelnienie;
 };
 
@@ -21,43 +21,42 @@ public:
 class GeneratorWejscia
 {
 public:
-    virtual double GenWartZad(ParametryGeneratora wejscie) = 0;
-    int Probki;
-    int l;
+    virtual double GenWartZad(double wejscie) = 0;
+    ParametryGeneratora parametry;
 };
 
 // generator sygnału stałego
 class GeneratorSygnaluStalego : public GeneratorWejscia
 {
 public:
-    double GenWartZad(ParametryGeneratora wejscie);
+    double GenWartZad(double wejscie);
 };
 
 // generator skoku jednostkowego
 class GeneratorSkokuJednostkowego : public GeneratorWejscia
 {
 public:
-    double GenWartZad(ParametryGeneratora wejscie);
+    double GenWartZad(double wejscie);
 };
 
 // generator prostokątny
 class GeneratorProstokatny : public GeneratorWejscia
 {
 public:
-    double GenWartZad(ParametryGeneratora wejscie);
+    double GenWartZad(double wejscie);
 };
 
 // generator sinusoidalny
 class GeneratorSinusoidalny : public GeneratorWejscia
 {
 public:
-    double GenWartZad(ParametryGeneratora wejscie);
+    double GenWartZad(double wejscie);
 };
 
 class FabrykaGenerator
 {
 public:
-    GeneratorWejscia* pobierzGenerator(string typ, int probki, int l);
+    GeneratorWejscia* pobierzGenerator(string typ, ParametryGeneratora parametry);
 };
 
 #endif

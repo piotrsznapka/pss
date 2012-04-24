@@ -9,16 +9,16 @@
 symulacja::symulacja()
 {
     parametryGeneratora.Amplituda = 5.0;
-    parametryGeneratora.ChwilaSkoku = 1;
-    parametryGeneratora.Okres = 1;
-    parametryGeneratora.Wypelnienie = 5.0;
+    parametryGeneratora.ChwilaSkoku = 10;
+    parametryGeneratora.Okres = 10.0;
+    parametryGeneratora.Wypelnienie = 100.0;
 
 }
 
-wynikSymulacji symulacja::symuluj(double wejscie)
+wynikSymulacji symulacja::symuluj(double wejscie, int probka)
 {
     wynikSymulacji wynik;
-    wynik.wyjscieGeneratora = generator->GenWartZad(parametryGeneratora);
+    wynik.wyjscieGeneratora = generator->GenWartZad(probka / 100);
     double wyjscieRegulatora = regulator->symuluj(wejscie, wynik.wyjscieGeneratora);
     wynik.wyjscie = arx->symuluj(wyjscieRegulatora);
 
@@ -49,5 +49,5 @@ void symulacja::init()
 {  
     arx = new ObiektARX(config.k, config.A, config.B);
     regulator = new RegulatorP(config.k);
-    generator = fabryka.pobierzGenerator(typGeneratora, 1, 0);
+    generator = fabryka.pobierzGenerator(typGeneratora, parametryGeneratora);
 }

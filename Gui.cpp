@@ -43,9 +43,9 @@ void Gui::createConfigButton(QLayout *layout)
 void Gui::createTypGeneratoraCombo(QLayout *layout)
 {
     typGeneratoraCombo = new QComboBox();
+    typGeneratoraCombo->addItem("staly", QVariant("staly"));
     typGeneratoraCombo->addItem("prostokatny", QVariant("prostokatny"));
     typGeneratoraCombo->addItem("skok", QVariant("skok"));
-    typGeneratoraCombo->addItem("staly", QVariant("staly"));
     typGeneratoraCombo->addItem("sinusoidalny", QVariant("sinusoidalny"));
     typGeneratoraCombo->addItem("Nie istniejacy typ", QVariant("ni ma"));
     connect(typGeneratoraCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(changeGenerator()));
@@ -57,7 +57,7 @@ void Gui::createInterwalTextEdit(QLayout *layout)
     QHBoxLayout *hlayout = new QHBoxLayout;
     QGroupBox *box = new QGroupBox;
     interwalText = new QLineEdit();
-    interwalText->setText("500");
+    interwalText->setText("100");
     QLabel* label = new QLabel(tr("Interwal probkowania (ms)"));
     zmienInterwal = new QPushButton("Zmien interwal");    
     connect(zmienInterwal, SIGNAL(clicked()), this, SLOT(changeInterwal()));
@@ -114,10 +114,14 @@ void Gui::redrawPlot(QVector<double> x, QVector<double> wejscie, QVector<double>
 {
     wykresWejscie->graph(0)->setData(x, wejscie);
     wykresWyjscie->graph(0)->setData(x, wyjscie);
-    wykresWejscie->xAxis->setRange(*min_element(x.begin(), x.end()), *max_element(x.begin(), x.end()) + 1);
-    wykresWejscie->yAxis->setRange(*min_element(wejscie.begin(), wejscie.end()), *max_element(wejscie.begin(), wejscie.end()) + 1);
-    wykresWyjscie->xAxis->setRange(*min_element(x.begin(), x.end()), *max_element(x.begin(), x.end()) + 1);
-    wykresWyjscie->yAxis->setRange(*min_element(wyjscie.begin(), wyjscie.end()), *max_element(wyjscie.begin(), wyjscie.end()) + 1);
+    wykresWejscie->xAxis->setRange(*min_element(x.begin(), x.end()) - 1,
+            *max_element(x.begin(), x.end()) + 1);
+    wykresWejscie->yAxis->setRange(*min_element(wejscie.begin(), wejscie.end()) - 1,
+            *max_element(wejscie.begin(), wejscie.end()) + 1);
+    wykresWyjscie->xAxis->setRange(*min_element(x.begin(), x.end()) - 1,
+            *max_element(x.begin(), x.end()) + 1);
+    wykresWyjscie->yAxis->setRange(*min_element(wyjscie.begin(), wyjscie.end()) - 1,
+            *max_element(wyjscie.begin(), wyjscie.end()) + 1);
     wykresWejscie->replot();
     wykresWyjscie->replot();
 }
@@ -160,7 +164,7 @@ void Gui::run()
 {
     try {
         xVector.push_back(x);
-        wynikSymulacji wynik = sim.symuluj(wejscie);
+        wynikSymulacji wynik = sim.symuluj(wejscie, x);
         wyjscieVector.push_back(wynik.wyjscieGeneratora);
         wejscieVector.push_back(wynik.wyjscie);
         wejscie = wynik.wyjscie; // zapętlenie regulatorów

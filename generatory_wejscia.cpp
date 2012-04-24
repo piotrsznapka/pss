@@ -1,51 +1,46 @@
 #include "generatory_wejscia.h"
+#include "generator.h"
 
-//sygna� sta�y     
-double GeneratorSygnaluStalego::GenWartZad(ParametryGeneratora wejscie)
-{         
-    return wejscie.Amplituda;
+//Sygnal staly     
+double GeneratorSygnaluStalego::GenWartZad(double wejscie)
+{
+    return parametry.Amplituda;
 }
            
 //Skok jednostkowy
-double GeneratorSkokuJednostkowego::GenWartZad(ParametryGeneratora wejscie)
+double GeneratorSkokuJednostkowego::GenWartZad(double wejscie)
 {          
-    if(wejscie.ChwilaSkoku == Probki) {
-        return 1;
-    } else {
-        Probki++;
-        return 0;
-    }
+    return (parametry.ChwilaSkoku == wejscie) ? 0 : 1;
 }
 
-//Prostok�t       
-double GeneratorProstokatny::GenWartZad(ParametryGeneratora wejscie)
+//Prostokat       
+double GeneratorProstokatny::GenWartZad(double wejscie)
 {    
     double Wartosc;
-    if(Probki <= ((wejscie.Okres/2)+ (l*wejscie.Okres)) && Probki > (0+l*wejscie.Okres) )  {        
-         Wartosc = wejscie.Amplituda;             
+    if (wejscie <= ((parametry.Okres/2)+ (parametry.Wypelnienie*parametry.Okres)) 
+     && wejscie > (parametry.Wypelnienie*parametry.Okres)
+    ) {        
+        Wartosc = parametry.Amplituda;             
     } else{ 
-        Wartosc = (0 - wejscie.Amplituda);
+        Wartosc = -1 * parametry.Amplituda;
     }
 
-    Probki++;
-    if( Probki == ((l+1)*wejscie.Okres) ){
-        l++;
+    if (wejscie == ((parametry.Wypelnienie+1)*parametry.Okres)) {
+        parametry.Wypelnienie++;
     }
     return Wartosc;
 }      
         
 //Sinusoida       
-double GeneratorSinusoidalny::GenWartZad(ParametryGeneratora wejscie)
+double GeneratorSinusoidalny::GenWartZad(double wejscie)
 {     
-       double Wartosc;
-       Wartosc = wejscie.Amplituda * sin( ((2*M_PI) / wejscie.Okres)*Probki);
-       Probki++;
-       return Wartosc;
+       return parametry.Amplituda * sin(((2*M_PI) / parametry.Okres)*wejscie);
 }
 
-GeneratorWejscia* FabrykaGenerator::pobierzGenerator(string typ, int probki, int l)
+//Fabryka
+GeneratorWejscia* FabrykaGenerator::pobierzGenerator(string typ, ParametryGeneratora parametry)
 {
-    GeneratorWejscia * generator;
+    GeneratorWejscia* generator;
     
     if (typ == "staly") {
         generator = new GeneratorSygnaluStalego();
@@ -58,7 +53,7 @@ GeneratorWejscia* FabrykaGenerator::pobierzGenerator(string typ, int probki, int
     } else {
         throw "Nie znaleziono generatora o typie: " + typ;
     }
-    generator->Probki = probki;
-    generator->l = l;
+    
+    generator->parametry = parametry;
     return generator;
 }

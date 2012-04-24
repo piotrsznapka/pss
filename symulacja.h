@@ -23,7 +23,7 @@ public:
 class symulacja {
 public:
     symulacja();
-    wynikSymulacji symuluj(double wejscie);
+    wynikSymulacji symuluj(double wejscie, int probka);
     void setTypGeneratora(string typ);
     void setConfig(konfiguracja config);
     void init(konfiguracja config, string typ);
